@@ -1,7 +1,7 @@
 import { createTheme } from "@material-ui/core/styles";
 
 export const theme = createTheme({
-  spacing: 4,
+  spacing: (factor) => `${0.25 * factor}rem`,
   typography: {
     fontFamily: "Open Sans, sans-serif",
     fontSize: 14,
