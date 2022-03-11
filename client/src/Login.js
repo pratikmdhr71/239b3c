@@ -1,17 +1,12 @@
 import React, { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import {
-  Grid,
-  Box,
-  Typography,
-  Button,
-  FormControl,
-  TextField,
-} from '@material-ui/core';
+import { InputAdornment, TextField, FormControl } from '@material-ui/core';
+import SwitchPage from './components/Common/SwitchPage';
+import Layout from './components/Common/LoginSignupLayout';
+import Form from './components/Common/Form';
 
 const Login = ({ user, login }) => {
   const history = useHistory();
-
   const handleLogin = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -27,43 +22,44 @@ const Login = ({ user, login }) => {
   }, [user, history]);
 
   return (
-    <Grid container justifyContent="center">
-      <Box>
-        <Grid container item>
-          <Typography>Need to register?</Typography>
-          <Link href="/register" to="/register">
-            <Button>Register</Button>
-          </Link>
-        </Grid>
-        <form onSubmit={handleLogin}>
-          <Grid>
-            <Grid>
-              <FormControl margin="normal" required>
-                <TextField
-                  aria-label="username"
-                  label="Username"
-                  name="username"
-                  type="text"
-                />
-              </FormControl>
-            </Grid>
-            <FormControl margin="normal" required>
-              <TextField
-                label="password"
-                aria-label="password"
-                type="password"
-                name="password"
-              />
-            </FormControl>
-            <Grid>
-              <Button type="submit" variant="contained" size="large">
-                Login
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </Box>
-    </Grid>
+    <Layout>
+      <SwitchPage
+        target="/register"
+        btnText="Create Account"
+        helperText="Don't have an account?"
+      />
+      <Form
+        headerText="Welcome back!"
+        btnText="Login"
+        onFormSubmit={handleLogin}
+      >
+        <FormControl required>
+          <TextField
+            label="Username"
+            aria-label="username"
+            name="username"
+            type="text"
+          />
+        </FormControl>
+        <FormControl required>
+          <TextField
+            label="Password"
+            aria-label="password"
+            name="password"
+            type="password"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Link href="/register" to="/register">
+                    Forgot?
+                  </Link>
+                </InputAdornment>
+              )
+            }}
+          />
+        </FormControl>
+      </Form>
+    </Layout>
   );
 };
 
