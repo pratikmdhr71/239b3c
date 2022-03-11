@@ -1,18 +1,9 @@
 import React, { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
-import ButtonStyled from './components/Common/ButtonStyled';
+import { InputAdornment, TextField, FormControl } from '@material-ui/core';
+import SwitchPage from './components/Common/SwitchPage';
 import Layout from './components/Common/LoginSignupLayout';
-
-const loginFormDetails = {
-  formType: 'login',
-  headerText: 'Welcome back!',
-  inputFields: [
-    { id: 0, name: 'username', label: 'Username', inputType: 'text' },
-    { id: 1, name: 'password', label: 'Password', inputType: 'password' }
-  ],
-  submitBtnText: 'Login'
-};
+import Form from './components/Common/Form';
 
 const Login = ({ user, login }) => {
   const history = useHistory();
@@ -26,25 +17,49 @@ const Login = ({ user, login }) => {
     await login({ username, password });
   };
 
-  const SwitchToSignupComponent = (
-    <>
-      <Typography variant="body2">Don't have an account?</Typography>
-      <Link href="/register" to="/register">
-        <ButtonStyled btnStyle="secondary">Create Account</ButtonStyled>
-      </Link>
-    </>
-  );
-
   useEffect(() => {
     if (user && user.id) history.push('/home');
   }, [user, history]);
 
   return (
-    <Layout
-      switchPageContent={SwitchToSignupComponent}
-      formDetails={loginFormDetails}
-      onFormSubmit={handleLogin}
-    ></Layout>
+    <Layout>
+      <SwitchPage
+        target="/register"
+        btnText="Create Account"
+        helperText="Don't have an account?"
+      />
+      <Form
+        headerText="Welcome back!"
+        btnText="Login"
+        onFormSubmit={handleLogin}
+      >
+        <FormControl required>
+          <TextField
+            label="Username"
+            aria-label="username"
+            name="username"
+            type="text"
+          />
+        </FormControl>
+        <FormControl required>
+          <TextField
+            label="Password"
+            aria-label="password"
+            name="password"
+            type="password"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Link href="/register" to="/register">
+                    Forgot?
+                  </Link>
+                </InputAdornment>
+              )
+            }}
+          />
+        </FormControl>
+      </Form>
+    </Layout>
   );
 };
 

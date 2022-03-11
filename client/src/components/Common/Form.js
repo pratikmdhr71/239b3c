@@ -1,24 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import {
-  Grid,
-  Box,
-  Typography,
-  FormControl,
-  TextField,
-  InputAdornment
-} from '@material-ui/core';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import ButtonStyled from './ButtonStyled';
-import { FormHelperText } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { Grid, Typography, Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   formContainer: {
-    width: '23.75rem',
-    padding: theme.spacing(0, 4),
+    maxWidth: '23.75rem',
+    flexGrow: 1,
+    padding: theme.spacing(0, 4, 20),
     [theme.breakpoints.up('lg')]: {
-      width: '30rem'
+      maxWidth: '30rem'
+    },
+    [theme.breakpoints.down('xs')]: {
+      padding: theme.spacing(8, 7.5, 20)
     },
     '& .MuiInput-underline:before': {
       borderBottomColor: '#D5DFEE',
@@ -33,8 +26,12 @@ const useStyles = makeStyles((theme) => ({
   },
 
   inputFieldContainer: {
-    marginTop: theme.spacing(2),
-    gridGap: theme.spacing(3.5),
+    margin: theme.spacing(8, 0, 13),
+    gridGap: theme.spacing(8),
+    [theme.breakpoints.down('xs')]: {
+      margin: theme.spacing(6, 0, 8),
+      gridGap: theme.spacing(6)
+    },
     '& label': {
       color: theme.palette.secondary.main,
       paddingLeft: theme.spacing(1),
@@ -49,90 +46,53 @@ const useStyles = makeStyles((theme) => ({
       [theme.breakpoints.down('md')]: {
         paddingTop: theme.spacing(3)
       }
+    },
+    '& a': {
+      padding: theme.spacing(0, 2.5),
+      color: theme.palette.primary.main,
+      fontSize: '0.875rem',
+      fontWeight: 600
     }
   },
 
-  forgetPassword: {
-    padding: theme.spacing(0, 2.5),
-    color: theme.palette.primary.main,
-    fontSize: '0.875rem',
-    fontWeight: 600
+  btn: {
+    display: 'flex',
+    margin: theme.spacing(0, 'auto'),
+    fontSize: '1rem',
+    fontWeight: 700
   }
 }));
 
-const Form = ({
-  formDetails,
-  btnStyle,
-  onFormSubmit,
-  passwordErrorMessage
-}) => {
+const Form = ({ headerText, onFormSubmit, btnText, children }) => {
   const classes = useStyles();
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
-
-  const { formType, headerText, inputFields, passwordLength, submitBtnText } =
-    formDetails;
 
   return (
-    <Box className={classes.formContainer}>
-      <Typography className={`${classes.formHeaderText}`}>
-        {headerText}
-      </Typography>
+    <Grid
+      className={classes.formContainer}
+      container
+      item
+      direction="column"
+      justifyContent="center"
+    >
+      <Typography className={classes.formHeaderText}>{headerText}</Typography>
       <form onSubmit={onFormSubmit}>
         <Grid
           className={classes.inputFieldContainer}
           container
           direction="column"
         >
-          {inputFields.map(({ id, name, label, inputType }) => (
-            <FormControl
-              key={id}
-              margin={`${isDesktop ? 'normal' : 'dense'}`}
-              required
-              error={
-                formType === 'signup' &&
-                inputType === 'password' &&
-                !!passwordErrorMessage
-              }
-            >
-              <TextField
-                label={label}
-                aria-label={label}
-                name={name}
-                type={inputType}
-                required={formType === 'signup' ? true : false}
-                inputProps={
-                  formType === 'signup' && inputType === 'password'
-                    ? { minLength: passwordLength }
-                    : {}
-                }
-                InputProps={
-                  formType === 'login' && inputType === 'password'
-                    ? {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <Link
-                              className={classes.forgetPassword}
-                              href="/register"
-                              to="/register"
-                            >
-                              Forgot?
-                            </Link>
-                          </InputAdornment>
-                        )
-                      }
-                    : {}
-                }
-              />
-              {formType === 'signup' && inputType === 'password' && (
-                <FormHelperText>{passwordErrorMessage}</FormHelperText>
-              )}
-            </FormControl>
-          ))}
-          <ButtonStyled btnStyle={btnStyle}>{submitBtnText}</ButtonStyled>
+          {children}
         </Grid>
+        <Button
+          className={classes.btn}
+          type="submit"
+          variant="contained"
+          color="primary"
+        >
+          {btnText}
+        </Button>
       </form>
-    </Box>
+    </Grid>
   );
 };
 

@@ -1,26 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
-import ButtonStyled from './components/Common/ButtonStyled';
+import { useHistory } from 'react-router-dom';
+import { TextField, FormHelperText, FormControl } from '@material-ui/core';
+import SwitchPage from './components/Common/SwitchPage';
 import Layout from './components/Common/LoginSignupLayout';
-
-const signupFormDetails = {
-  formType: 'signup',
-  headerText: 'Create an account',
-  inputFields: [
-    { id: 0, name: 'username', label: 'Username', inputType: 'text' },
-    { id: 1, name: 'email', label: 'E-mail address', inputType: 'email' },
-    { id: 2, name: 'password', label: 'Password', inputType: 'password' },
-    {
-      id: 3,
-      name: 'confirmPassword',
-      label: 'Confirm Password',
-      inputType: 'password'
-    }
-  ],
-  passwordLength: 6,
-  submitBtnText: 'Create'
-};
+import Form from './components/Common/Form';
 
 const Signup = ({ user, register }) => {
   const history = useHistory();
@@ -43,26 +26,60 @@ const Signup = ({ user, register }) => {
     await register({ username, email, password });
   };
 
-  const SwitchToLoginComponent = (
-    <>
-      <Typography variant="body2">Already have an account?</Typography>
-      <Link href="/login" to="/login">
-        <ButtonStyled btnStyle="secondary">Login</ButtonStyled>
-      </Link>
-    </>
-  );
-
   useEffect(() => {
     if (user && user.id) history.push('/home');
   }, [user, history]);
 
   return (
-    <Layout
-      switchPageContent={SwitchToLoginComponent}
-      formDetails={signupFormDetails}
-      passwordErrorMessage={formErrorMessage.confirmPassword}
-      onFormSubmit={handleRegister}
-    ></Layout>
+    <Layout>
+      <SwitchPage
+        target="/login"
+        btnText="Login"
+        helperText="Already have an account?"
+      />
+      <Form
+        headerText="Create an account"
+        btnText="Create"
+        onFormSubmit={handleRegister}
+      >
+        <TextField
+          label="Username"
+          aria-label="username"
+          name="username"
+          type="text"
+          required
+        />
+        <TextField
+          label="E-mail address"
+          aria-label="email address"
+          name="email"
+          type="email"
+          required
+        />
+        <FormControl error={!!formErrorMessage.confirmPassword}>
+          <TextField
+            aria-label="password"
+            label="Password"
+            type="password"
+            inputProps={{ minLength: 6 }}
+            name="password"
+            required
+          />
+          <FormHelperText>{formErrorMessage.confirmPassword}</FormHelperText>
+        </FormControl>
+        <FormControl error={!!formErrorMessage.confirmPassword}>
+          <TextField
+            label="Confirm Password"
+            aria-label="confirm password"
+            type="password"
+            inputProps={{ minLength: 6 }}
+            name="confirmPassword"
+            required
+          />
+          <FormHelperText>{formErrorMessage.confirmPassword}</FormHelperText>
+        </FormControl>
+      </Form>
+    </Layout>
   );
 };
 

@@ -1,15 +1,24 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Box, Typography, Hidden } from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Grid, Box, Typography } from '@material-ui/core';
 import BgImage from '../../assets/images/bg-img.png';
-import BgImageMobile from '../../assets/images/bg-img-mobile.png';
 import ChatBubble from '../../assets/images/bubble.svg';
-import Form from './Form';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     height: '100vh',
-    ' & a': { textDecoration: 'none' }
+    '& a': { textDecoration: 'none' },
+    '& button': {
+      height: '3.375rem',
+      minWidth: '10rem',
+      padding: theme.spacing(0, 8.5),
+      [theme.breakpoints.down('sm')]: {
+        height: '3rem',
+        minWidth: '8.65rem',
+        padding: theme.spacing(0, 4)
+      }
+    }
   },
 
   sideBanner: {
@@ -49,54 +58,18 @@ const useStyles = makeStyles((theme) => ({
     }
   },
 
-  // The main container for the right section of the page that includes the form
-  primaryContainer: {
-    position: 'relative',
-    padding: theme.spacing(0, 10.5),
-    [theme.breakpoints.down('xs')]: {
-      padding: theme.spacing(0, 8)
-    },
+  container: {
     backgroundColor: theme.palette.background.paper
-  },
-
-  // The container for the button and helper text at the top of the page
-  secondaryContainer: {
-    position: 'absolute',
-    top: '0',
-    right: '0',
-    padding: theme.spacing(7.5, 10.5),
-    gridGap: theme.spacing(7.5),
-    flexWrap: 'nowrap',
-    textDecoration: 'none',
-
-    [theme.breakpoints.down('xs')]: {
-      padding: theme.spacing(7.5, 8),
-      gridGap: theme.spacing(4),
-      background: `url(${BgImageMobile}) no-repeat top`,
-      backgroundSize: 'cover',
-      height: '8rem'
-    },
-    '& p': {
-      color: theme.palette.secondary.main,
-      [theme.breakpoints.down('xs')]: {
-        color: 'white',
-        fontSize: '0.79rem',
-        fontWeight: 600
-      }
-    }
   }
 }));
 
-const LoginSignupLayout = ({
-  switchPageContent,
-  formDetails,
-  passwordErrorMessage,
-  onFormSubmit
-}) => {
+const LoginSignupLayout = ({ children }) => {
   const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
   return (
-    <Grid className={classes.root} container justifyContent="center">
-      <Hidden xsDown>
+    <Grid className={classes.root} container>
+      {!isMobile && (
         <Grid className={classes.sideBanner} sm={5} item>
           <Grid
             className={classes.overlay}
@@ -111,31 +84,18 @@ const LoginSignupLayout = ({
             </Box>
           </Grid>
         </Grid>
-      </Hidden>
+      )}
       <Grid
-        className={classes.primaryContainer}
+        className={classes.container}
         xs={12}
         sm={7}
         container
         item
-        justifyContent="center"
+        direction="column"
+        justifyContent="flex-start"
         alignItems="center"
       >
-        <Grid
-          className={classes.secondaryContainer}
-          container
-          item
-          justifyContent="flex-end"
-          alignItems="center"
-        >
-          {switchPageContent}
-        </Grid>
-        <Form
-          formDetails={formDetails}
-          onFormSubmit={onFormSubmit}
-          passwordErrorMessage={passwordErrorMessage}
-          btnStyle="primary"
-        />
+        {children}
       </Grid>
     </Grid>
   );
