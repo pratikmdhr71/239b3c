@@ -113,7 +113,7 @@ const Home = ({ user, logout }) => {
         if (convo.otherUser.id === recipientId) {
           const convoCopy = { ...convo };
           convoCopy.messages = [...convoCopy.messages, message];
-          convoCopy.latestMessageText = updateLatestMessageText(message.text);
+          convoCopy.latestMessageText = updateLatestMessageText(message);
           convoCopy.id = message.conversationId;
           return convoCopy;
         } else {
@@ -123,31 +123,32 @@ const Home = ({ user, logout }) => {
     );
   }, []);
 
-  const addMessageToConversation = useCallback((data) => {
-    // if sender isn't null, that means the message needs to be put in a brand new convo
-    const { message, sender = null } = data;
-    if (sender !== null) {
-      const newConvo = {
-        id: message.conversationId,
-        otherUser: sender,
-        messages: [message],
-      };
-      newConvo.latestMessageText = updateLatestMessageText(message.text);
-      setConversations((prev) => [newConvo, ...prev]);
-    } else {
-      setConversations((prev) =>
-        prev.map((convo) => {
-          if (convo.id === message.conversationId) {
-            const convoCopy = { ...convo };
-            convoCopy.messages = [...convoCopy.messages, message];
-            convoCopy.latestMessageText = updateLatestMessageText(message.text);
-            return convoCopy;
-          } else {
-            return convo;
-          }
-        }),
-      );
-    }
+  const addMessageToConversation = useCallback(
+    (data) => {
+      // if sender isn't null, that means the message needs to be put in a brand new convo
+      const { message, sender = null } = data;
+      if (sender !== null) {
+        const newConvo = {
+          id: message.conversationId,
+          otherUser: sender,
+          messages: [message],
+        };
+        newConvo.latestMessageText = updateLatestMessageText(message);
+        setConversations((prev) => [newConvo, ...prev]);
+      } else {
+        setConversations((prev) =>
+          prev.map((convo) => {
+            if (convo.id === message.conversationId) {
+              const convoCopy = { ...convo };
+              convoCopy.messages = [...convoCopy.messages, message];
+              convoCopy.latestMessageText = updateLatestMessageText(message);
+              return convoCopy;
+            } else {
+              return convo;
+            }
+          }),
+        );
+      }
   }, []);
 
   const setActiveChat = (username) => {

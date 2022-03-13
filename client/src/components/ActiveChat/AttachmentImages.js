@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
   multipleImage: {
     margin: theme.spacing(2.5, 0, 1.5),
-    gridGap: 6,
+    gridGap: theme.spacing(1.5),
     maxWidth: '22rem',
     '& img': {
       objectFit: 'cover',
