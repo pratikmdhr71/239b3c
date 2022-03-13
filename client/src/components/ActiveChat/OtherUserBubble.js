@@ -1,10 +1,12 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Typography, Avatar } from '@material-ui/core';
+import { Box, Typography, Avatar, Grid } from '@material-ui/core';
+import AttachmentImages from './AttachmentImages';
 
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
+    marginTop: 24,
   },
   avatar: {
     height: 30,
@@ -31,7 +33,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const OtherUserBubble = ({ text, time, otherUser }) => {
+const OtherUserBubble = ({ text, time, otherUser, attachments }) => {
   const classes = useStyles();
 
   return (
@@ -41,14 +43,27 @@ const OtherUserBubble = ({ text, time, otherUser }) => {
         src={otherUser.photoUrl}
         className={classes.avatar}
       />
-      <Box>
+      <Grid
+        className={classes.messageContent}
+        container
+        direction={`${attachments?.length > 1 ? 'column-reverse' : 'column'}`}
+        alignItems="flex-start"
+      >
         <Typography className={classes.usernameDate}>
           {otherUser.username} {time}
         </Typography>
-        <Box className={classes.bubble}>
-          <Typography className={classes.text}>{text}</Typography>
-        </Box>
-      </Box>
+        {attachments && (
+          <AttachmentImages
+            attachments={attachments}
+            justifyContent="flex-start"
+          />
+        )}
+        {text !== '' && (
+          <Box className={classes.bubble}>
+            <Typography className={classes.text}>{text}</Typography>
+          </Box>
+        )}
+      </Grid>
     </Box>
   );
 };
