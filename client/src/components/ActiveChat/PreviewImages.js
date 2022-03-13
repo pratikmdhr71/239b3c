@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import { Box, Grid, Input, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
@@ -62,7 +62,7 @@ const PreviewImages = ({
       }`}
     >
       {selectedImages.map((image) => (
-        <div className={classes.imageContainer} key={Math.random()}>
+        <Box className={classes.imageContainer} key={Math.random()}>
           <img src={URL.createObjectURL(image)} width={60} height={45} alt="" />
           {!isUploading && (
             <IconButton
@@ -73,11 +73,11 @@ const PreviewImages = ({
               <CancelIcon />
             </IconButton>
           )}
-        </div>
+        </Box>
       ))}
       {!isUploading && (
-        <div>
-          <input
+        <Box>
+          <Input
             accept="image/*"
             name="images"
             className={classes.imageInput}
@@ -85,9 +85,9 @@ const PreviewImages = ({
             type="file"
             files={selectedImages}
             onChange={addImages}
-            multiple
+            inputProps={{ multiple: true }}
           />
-          <label htmlFor="attach-more-image-icon">
+          <InputLabel htmlFor="attach-more-image-icon">
             <IconButton
               className={classes.addMore}
               aria-label="upload picture"
@@ -95,8 +95,8 @@ const PreviewImages = ({
             >
               <AddRoundedIcon />
             </IconButton>
-          </label>
-        </div>
+          </InputLabel>
+        </Box>
       )}
     </Grid>
   );

@@ -1,10 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import {
+  Box,
   FormControl,
   FilledInput,
   InputAdornment,
   IconButton,
+  InputLabel
 } from '@material-ui/core';
+import MuiInput from '@material-ui/core/Input';
 import { makeStyles } from '@material-ui/core/styles';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import PreviewImages from './PreviewImages';
@@ -25,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
         color: 'rgba(0, 0, 0, 0.54)',
       },
     },
+  },
+  attachImageButton: {
+    display: 'none',
   },
 }));
 
@@ -82,7 +88,7 @@ const Input = ({
   };
 
   return (
-    <div className={classes.root}>
+    <Box className={classes.root}>
       {selectedImages.length > 0 && (
         <PreviewImages
           selectedImages={selectedImages}
@@ -99,35 +105,35 @@ const Input = ({
             placeholder="Type something..."
             value={text}
             name="text"
-            disabled={isUploading ? true : false}
+            disabled={isUploading}
             onChange={handleChange}
             endAdornment={
               <InputAdornment position="end">
-                <input
+                <MuiInput
+                  className={classes.attachImageButton}
                   accept="image/*"
                   name="images"
                   id="attach-image-icon"
                   type="file"
                   onChange={addImages}
-                  multiple
-                  disabled={isUploading ? true : false}
-                  style={{ display: 'none' }}
+                  inputProps={{ multiple: true }}
+                  disabled={isUploading}
                 />
-                <label htmlFor="attach-image-icon">
+                <InputLabel htmlFor="attach-image-icon">
                   <IconButton
                     aria-label="attach picture"
                     component="span"
-                    disabled={isUploading ? true : false}
+                    disabled={isUploading}
                   >
                     <FileCopyOutlinedIcon />
                   </IconButton>
-                </label>
+                </InputLabel>
               </InputAdornment>
             }
           />
         </FormControl>
       </form>
-    </div>
+    </Box>
   );
 };
 
