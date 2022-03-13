@@ -62,6 +62,29 @@ const Home = ({ user, logout }) => {
     });
   };
 
+  const uploadImages = async (imageList) => {
+    try {
+      const imageUrls = [];
+      for (let image of imageList) {
+        const formData = new FormData();
+        formData.append("file", image);
+        formData.append(
+          "upload_preset",
+          process.env.REACT_APP_CLOUDINARY_PRESET,
+        );
+        const res = await fetch(process.env.REACT_APP_CLOUDINARY_URL, {
+          method: "POST",
+          body: formData,
+        });
+        const { secure_url } = await res.json();
+        imageUrls.push(secure_url);
+      }
+      return imageUrls;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
@@ -94,32 +117,31 @@ const Home = ({ user, logout }) => {
     );
   }, []);
 
-  const addMessageToConversation = useCallback(
-    (data) => {
-      // if sender isn't null, that means the message needs to be put in a brand new convo
-      const { message, sender = null } = data;
-      if (sender !== null) {
-        const newConvo = {
-          id: message.conversationId,
-          otherUser: sender,
-          messages: [message],
-        };
-        newConvo.latestMessageText = message.text;
-        setConversations((prev) => [newConvo, ...prev]);
-      } else {
-        setConversations((prev) =>
-          prev.map((convo) => {
-            if (convo.id === message.conversationId) {
-              const convoCopy = { ...convo };
-              convoCopy.messages = [...convoCopy.messages, message];
-              convoCopy.latestMessageText = message.text;
-              return convoCopy;
-            } else {
-              return convo;
-            }
-          }),
-        );
-      }
+  const addMessageToConversation = useCallback((data) => {
+    // if sender isn't null, that means the message needs to be put in a brand new convo
+    const { message, sender = null } = data;
+    if (sender !== null) {
+      const newConvo = {
+        id: message.conversationId,
+        otherUser: sender,
+        messages: [message],
+      };
+      newConvo.latestMessageText = message.text;
+      setConversations((prev) => [newConvo, ...prev]);
+    } else {
+      setConversations((prev) =>
+        prev.map((convo) => {
+          if (convo.id === message.conversationId) {
+            const convoCopy = { ...convo };
+            convoCopy.messages = [...convoCopy.messages, message];
+            convoCopy.latestMessageText = message.text;
+            return convoCopy;
+          } else {
+            return convo;
+          }
+        }),
+      );
+    }
   }, []);
 
   const setActiveChat = (username) => {
@@ -225,6 +247,7 @@ const Home = ({ user, logout }) => {
           conversations={conversations}
           user={user}
           postMessage={postMessage}
+          uploadImages={uploadImages}
         />
       </Grid>
     </>
