@@ -14,6 +14,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const cloudinaryAxios = axios.create({
+  transformRequest: [
+    (data, headers) => {
+      delete headers.common["Authorization"];
+      return data;
+    },
+  ],
+});
+
 const Home = ({ user, logout }) => {
   const history = useHistory();
 
@@ -72,11 +81,11 @@ const Home = ({ user, logout }) => {
           "upload_preset",
           process.env.REACT_APP_CLOUDINARY_PRESET,
         );
-        const res = await fetch(process.env.REACT_APP_CLOUDINARY_URL, {
-          method: "POST",
-          body: formData,
-        });
-        const { secure_url } = await res.json();
+        const { data } = await cloudinaryAxios.post(
+          process.env.REACT_APP_CLOUDINARY_URL,
+          formData,
+        );
+        const { secure_url } = data;
         imageUrls.push(secure_url);
       }
       return imageUrls;
