@@ -101,13 +101,19 @@ const Home = ({ user, logout }) => {
     }
   };
 
+  const updateLatestMessageText = (message) => {
+    return message.text === "" && message.attachments.length > 0
+      ? "Image transferred"
+      : message.text;
+  };
+
   const addNewConvo = useCallback((recipientId, message) => {
     setConversations((prev) =>
       prev.map((convo) => {
         if (convo.otherUser.id === recipientId) {
           const convoCopy = { ...convo };
           convoCopy.messages = [...convoCopy.messages, message];
-          convoCopy.latestMessageText = message.text;
+          convoCopy.latestMessageText = updateLatestMessageText(message.text);
           convoCopy.id = message.conversationId;
           return convoCopy;
         } else {
@@ -126,7 +132,7 @@ const Home = ({ user, logout }) => {
         otherUser: sender,
         messages: [message],
       };
-      newConvo.latestMessageText = message.text;
+      newConvo.latestMessageText = updateLatestMessageText(message.text);
       setConversations((prev) => [newConvo, ...prev]);
     } else {
       setConversations((prev) =>
@@ -134,7 +140,7 @@ const Home = ({ user, logout }) => {
           if (convo.id === message.conversationId) {
             const convoCopy = { ...convo };
             convoCopy.messages = [...convoCopy.messages, message];
-            convoCopy.latestMessageText = message.text;
+            convoCopy.latestMessageText = updateLatestMessageText(message.text);
             return convoCopy;
           } else {
             return convo;
