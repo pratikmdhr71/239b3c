@@ -73,22 +73,21 @@ const Home = ({ user, logout }) => {
 
   const uploadImages = async (imageList) => {
     try {
-      const imageUrls = [];
-      for (let image of imageList) {
-        const formData = new FormData();
-        formData.append("file", image);
-        formData.append(
-          "upload_preset",
-          process.env.REACT_APP_CLOUDINARY_PRESET,
-        );
-        const { data } = await cloudinaryAxios.post(
-          process.env.REACT_APP_CLOUDINARY_URL,
-          formData,
-        );
-        const { secure_url } = data;
-        imageUrls.push(secure_url);
-      }
-      return imageUrls;
+      const responses = await Promise.all(
+        imageList.map((image) => {
+          const formData = new FormData();
+          formData.append("file", image);
+          formData.append(
+            "upload_preset",
+            process.env.REACT_APP_CLOUDINARY_PRESET,
+          );
+          return cloudinaryAxios.post(
+            process.env.REACT_APP_CLOUDINARY_URL,
+            formData,
+          );
+        }),
+      );
+      return responses.map(({data}) => data.secure_url);
     } catch (error) {
       console.error(error);
     }
