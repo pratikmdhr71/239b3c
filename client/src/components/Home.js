@@ -14,6 +14,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const cloudinaryAxios = axios.create({
+  transformRequest: [
+    (data, headers) => {
+      delete headers.common["Authorization"];
+      return data;
+    },
+  ],
+});
+
 const Home = ({ user, logout }) => {
   const history = useHistory();
 
@@ -62,6 +71,28 @@ const Home = ({ user, logout }) => {
     });
   };
 
+  const uploadImages = async (imageList) => {
+    try {
+      const responses = await Promise.all(
+        imageList.map((image) => {
+          const formData = new FormData();
+          formData.append("file", image);
+          formData.append(
+            "upload_preset",
+            "jwxqtglv",
+          );
+          return cloudinaryAxios.post(
+            "https://api.cloudinary.com/v1_1/dzjnpdcj8/image/upload",
+            formData,
+          );
+        }),
+      );
+      return responses.map(({data}) => data.secure_url);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
@@ -78,13 +109,19 @@ const Home = ({ user, logout }) => {
     }
   };
 
+  const updateLatestMessageText = (message) => {
+    return message.text === "" && message.attachments.length > 0
+      ? "Image transferred"
+      : message.text;
+  };
+
   const addNewConvo = useCallback((recipientId, message) => {
     setConversations((prev) =>
       prev.map((convo) => {
         if (convo.otherUser.id === recipientId) {
           const convoCopy = { ...convo };
           convoCopy.messages = [...convoCopy.messages, message];
-          convoCopy.latestMessageText = message.text;
+          convoCopy.latestMessageText = updateLatestMessageText(message);
           convoCopy.id = message.conversationId;
           return convoCopy;
         } else {
@@ -104,7 +141,7 @@ const Home = ({ user, logout }) => {
           otherUser: sender,
           messages: [message],
         };
-        newConvo.latestMessageText = message.text;
+        newConvo.latestMessageText = updateLatestMessageText(message);
         setConversations((prev) => [newConvo, ...prev]);
       } else {
         setConversations((prev) =>
@@ -112,7 +149,7 @@ const Home = ({ user, logout }) => {
             if (convo.id === message.conversationId) {
               const convoCopy = { ...convo };
               convoCopy.messages = [...convoCopy.messages, message];
-              convoCopy.latestMessageText = message.text;
+              convoCopy.latestMessageText = updateLatestMessageText(message);
               return convoCopy;
             } else {
               return convo;
@@ -225,6 +262,7 @@ const Home = ({ user, logout }) => {
           conversations={conversations}
           user={user}
           postMessage={postMessage}
+          uploadImages={uploadImages}
         />
       </Grid>
     </>

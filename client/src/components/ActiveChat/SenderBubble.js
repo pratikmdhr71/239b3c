@@ -1,12 +1,11 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography, Grid } from '@material-ui/core';
+import AttachmentImages from './AttachmentImages';
 
 const useStyles = makeStyles(() => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
+    marginTop: 24,
   },
   date: {
     fontSize: 11,
@@ -27,16 +26,26 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SenderBubble = ({ time, text }) => {
+const SenderBubble = ({ time, text, attachments }) => {
   const classes = useStyles();
 
   return (
-    <Box className={classes.root}>
+    <Grid
+      className={classes.root}
+      container
+      direction={`${attachments?.length > 1 ? 'column-reverse' : 'column'}`}
+      alignItems="flex-end"
+    >
       <Typography className={classes.date}>{time}</Typography>
+      {attachments && (
+        <AttachmentImages attachments={attachments} justifyContent="flex-end" />
+      )}
       <Box className={classes.bubble}>
-        <Typography className={classes.text}>{text}</Typography>
+        {text !== '' && (
+          <Typography className={classes.text}>{text}</Typography>
+        )}
       </Box>
-    </Box>
+    </Grid>
   );
 };
 
