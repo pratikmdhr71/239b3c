@@ -79,10 +79,10 @@ const Home = ({ user, logout }) => {
           formData.append("file", image);
           formData.append(
             "upload_preset",
-            process.env.REACT_APP_CLOUDINARY_PRESET,
+            "jwxqtglv",
           );
           return cloudinaryAxios.post(
-            process.env.REACT_APP_CLOUDINARY_URL,
+            "https://api.cloudinary.com/v1_1/dzjnpdcj8/image/upload",
             formData,
           );
         }),
